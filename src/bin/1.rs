@@ -150,17 +150,13 @@ fn main() -> io::Result<()> {
 
         // パディングして20桁目から右側を開始
         // VIS_COL は1始まり。左側の文字数はASCIIのみなので=表示幅。
-        let left_len = left.len();
-        write!(out, "{left}")?;
-        if left_len + 1 < VIS_COL {
-            let pad = VIS_COL - (left_len + 1);
-            for _ in 0..pad {
-                write!(out, " ")?; // スペースで埋める
-            }
-        } else {
-            write!(out, " ")?; // 少なくとも1スペース
-        }
-        write!(out, "| {right}\r\n")?;
+        let pad = VIS_COL.saturating_sub(left.chars().count() + 1);
+        write!(
+            out,
+            "{left} {spaces:pad$}| {right}\r\n",
+            spaces = " ",
+            pad = pad
+        )?;
         out.flush()?;
     }
 
